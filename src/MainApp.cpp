@@ -5,7 +5,7 @@
 #include "Feature/FeatureController.h"
 #include "Feature/SwitchFeatureController.h"
 #include "Feature/LedFeatureController.h"
-// #include "Feature/DHT22FeatureController.h"
+#include "Feature/DHT22FeatureController.h"
 // #include "Feature/MotionSensorFeatureController.h"
 
 #define DEVICE_UNIQUE_ID "command1"
@@ -27,7 +27,7 @@ MainApp::MainApp() : _deviceConfig(DEVICE_UNIQUE_ID, NETWORK_NAME, NETWORK_PASSW
   _features.push_back(new SwitchFeatureController(4, this, 4, false));
   _features.push_back(new SwitchFeatureController(5, this, 5, false));
   _features.push_back(new LedFeatureController(1, this, 13));
-  // _features.push_back(new DHT22FeatureContorller(6, this, 12, TOPIC_SENSOR));
+  _features.push_back(new DHT22FeatureController(2, this, 2, TOPIC_SENSOR));
   // _features.push_back(new MotionSensorFeatureController(7, this, 14, TOPIC_SENSOR));
 }
 
