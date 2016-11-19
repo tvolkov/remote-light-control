@@ -8,12 +8,14 @@
 // #include "Feature/DHT22FeatureController.h"
 // #include "Feature/MotionSensorFeatureController.h"
 
-#define DEVICE_UNIQUE_ID "ESP8266_#1"
+#define DEVICE_UNIQUE_ID "command1"
 
 #define NETWORK_NAME "UPC012786"
 #define NETWORK_PASSWORD "SAAADVGQ"
+
+//mqtt broker ipaddress and port:
 #define SERVER_HOST "192.168.0.18"
-#define SERVER_PORT 8124
+#define SERVER_PORT 1883
 #define TOPIC_REGISTER "register"
 #define TOPIC_SENSOR "sensor"
 

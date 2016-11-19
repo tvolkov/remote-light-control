@@ -50,38 +50,47 @@ void MqttMessageBus::Unsubscribe(const char *topic)
     _mqttClient.unsubscribe(topic);
 }
 
-#define OFFLINE_MESSAGE "{ \"online\": false}"
-#define ONLINE_MESSAGE "{ \"online\": true}"
+#define OFFLINE_MESSAGE "{ \"online\": false }"
+#define ONLINE_MESSAGE "{ \"online\": true }"
 
 void MqttMessageBus::ReconnectMqtt()
 {
+  // String clientId = String(_deviceId) + "-" + String(random(0xffff), HEX);
+  // String statusTopic = String(_deviceId) + "/status";
   while (!_mqttClient.connected())
   {
-    String clientId = String(_deviceId) + "-" + String(random(0xffff), HEX);
-    Serial.printf("MQTT Attempting MQTT Connection (clientid %s)...\n", clientId.c_str());
+    Serial.printf("Attempting MQTT connection ...\n");
+     // boolean connect(const char* id, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
+    //  if (_mqttClient.connect(clientId.c_str(), statusTopic.c_str(), MQTTQOS2, true, OFFLINE_MESSAGE))
+    // if (_mqttClient.connect(clientId.c_str()))
+    if (_mqttClient.connect("MyESP8266#1"))
+     {
+       Serial.println("[MQTT] Connected");
+       _mqttClient.publish("state", "Hello!");
+       _mqttClient.subscribe("command1");
+     }
+     else
+     {
+       Serial.print("[MQTT] Failed to connect, rc=");
+       Serial.print(_mqttClient.state());
+       Serial.println(" try again in 5 seconds");
+       // Wait 5 seconds before retrying
+       delay(5000);
+     }
+   }
+   Serial.println("Trying to subscribe to all available topics");
 
-    String statusTopic = String(_deviceId) + "/status";
-    if (_mqttClient.connect(clientId.c_str(), statusTopic.c_str(), MQTTQOS0, true, OFFLINE_MESSAGE))
-    {
-      Serial.println("MQTT Connected");
-
-      std::for_each(_topics.begin(), _topics.end(), [this](const char* topic) {
-        Serial.printf("MQTT Subscribing to topic: %s\n", topic);
-        _mqttClient.subscribe(topic);
-      });
-      PublishInternal(statusTopic.c_str(), ONLINE_MESSAGE, true);
-    }
-    else
-    {
-      Serial.print("[MQTT] Failed to connect, rc=");
-      Serial.print(_mqttClient.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
-  }
+  //  if (_topics.size() > 0)
+  //  {
+  //    std::for_each(_topics.begin(), _topics.end(), [this](const char* topic) {
+  //      Serial.printf("[MQTT] Subscribing to topic: '%s'\n", topic);
+  //      _mqttClient.subscribe(topic);
+  //    });
+  //  }
+   //
+  //  // boolean publish(const char* topic, const char* payload, boolean retained);
+  //  PublishInternal(statusTopic.c_str(), ONLINE_MESSAGE, true);
 }
-
 void MqttMessageBus::Loop()
 {
   if (!_mqttClient.connected())
