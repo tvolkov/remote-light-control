@@ -35,7 +35,7 @@ public:
 	// from MessageHandler
 	virtual void Handle(const char* topic, JsonObject& message);
 
-protected:
+public:
 	void SetupWifi();
 
 	void OnStart();
